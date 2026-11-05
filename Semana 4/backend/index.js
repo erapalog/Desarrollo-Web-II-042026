@@ -6,7 +6,7 @@ const app = express()
 
 app.use(express.json())
 
-app.use(coor)
+app.use(coor())
 
 //get, post, put, delete
 
@@ -69,11 +69,10 @@ app.put('/producto/:id', async (req, res) => {
         });
 
         console.log(updated)
-        if (updated === 0) {
-            res.status(200).json(producto)
-        }
-        else {
-            res.status(400).json({ 'mensjae': 'informacion de producto no se actualizo' })
+        if (updated > 0) {
+            res.status(200).json({ mensaje: 'Se actualizó el producto' })
+        } else {
+            res.status(400).json({ mensaje: 'No se actualizó el producto' })
         }
 
 

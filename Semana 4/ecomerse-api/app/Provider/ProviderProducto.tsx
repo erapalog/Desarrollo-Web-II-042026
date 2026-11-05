@@ -5,44 +5,7 @@ import { ContexrProducto } from '../Context/ContextProducto';
 
 export default function ProviderProducto({ children }: Plantilla) {
 
-    const [producto, setProducto] = useState<Producto[]>([
-        {
-            idProducto: 1,
-            nombreProducto: 'papas',
-            precioProducto: 10,
-            isvProducto: 2,
-            imgProducto: ''
-        },
-        {
-            idProducto: 2,
-            nombreProducto: 'arroz',
-            precioProducto: 80,
-            isvProducto: 20,
-            imgProducto: ''
-        },
-        {
-            idProducto: 3,
-            nombreProducto: 'Manzanas',
-            precioProducto: 15,
-            isvProducto: 4,
-            imgProducto: ''
-        },
-        {
-            idProducto: 4,
-            nombreProducto: 'uvas',
-            precioProducto: 90,
-            isvProducto: 7,
-            imgProducto: ''
-        },
-        {
-            idProducto: 5,
-            nombreProducto: 'zanahorias',
-            precioProducto: 67,
-            isvProducto: 6,
-            imgProducto: ''
-        }
-
-    ]);
+    const [producto, setProducto] = useState<Producto[]>([]);
 
     const [carritoProducto, setCarritoProducto] = useState<Producto[]>([]);
 
@@ -51,11 +14,107 @@ export default function ProviderProducto({ children }: Plantilla) {
         setCarritoProducto([...carritoProducto, producto])
     }
 
+    async function consultarProducto() {
+        try {
+
+            const res = await fetch('http://localhost:5000/producto')
+            const data = await res.json()
+
+            setProducto(data)
+            // alert()
+
+        } catch (error) {
+            alert('Ocurrio un error al cargar los productos')
+        }
+    }
+
+    async function agregarProducto(producto: Producto) {
+
+        console.log(producto)
+
+        try {
+
+            const res = await fetch('http://localhost:5000/producto', {
+                method: 'POST',
+                body: JSON.stringify(producto),
+                'headers': {
+                    'Content-Type': 'application/json'
+                }
+
+
+            })
+            const data = await res.json()
+
+            consultarProducto()
+            alert('Producto creado')
+            //setProducto(data)
+
+        } catch (error) {
+            alert('Ocurrio un error al cargar los productos')
+        }
+
+    }
+
+    async function editarProducto(producto: Producto) {
+
+        console.log(producto)
+
+
+        try {
+
+            const res = await fetch('http://localhost:5000/producto/' + producto.idProducto, {
+                method: 'PUT',
+                body: JSON.stringify(producto),
+                'headers': {
+                    'Content-Type': 'application/json'
+                }
+
+
+            })
+            const data = await res.json()
+
+            consultarProducto()
+            alert('Producto Actualizado')
+            //setProducto(data)
+
+        } catch (error) {
+            alert('Ocurrio un error al cargar los productos')
+        }
+
+    }
+
+
+    async function eliminarProducto(id: number) {
+
+        console.log(producto)
+
+        try {
+
+            const res = await fetch('http://localhost:5000/producto/' + id, {
+                method: 'DELETE',
+                'headers': {
+                    'Content-Type': 'application/json'
+                }
+
+
+            })
+            const data = await res.json()
+
+            consultarProducto()
+            alert('Producto Eliminado')
+            //setProducto(data)
+
+        } catch (error) {
+            alert('Ocurrio un error al cargar los productos')
+        }
+
+    }
+
 
 
 
     return (
-        <ContexrProducto.Provider value={{ producto, carritoProducto, agregarCarrito }}>
+        <ContexrProducto.Provider value={{ producto, carritoProducto, agregarCarrito, consultarProducto, agregarProducto, eliminarProducto, editarProducto }}>
             {children}
         </ContexrProducto.Provider>
     )
